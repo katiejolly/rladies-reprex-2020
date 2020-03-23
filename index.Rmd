@@ -1,0 +1,276 @@
+---
+title: "Writing reproducible examples to get 'good help'"  
+author: "Katie Jolly @ RLadies Seattle"
+date: '`r Sys.Date()`'
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(reprex)
+library(tidyverse)
+library(extrafont)
+library(flair)
+
+minimal <- theme_set(theme_minimal())
+theme_update(text = element_text(family = "Lato", color = "gray50"))
+
+```
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+duo(
+  primary_color = "#faf9f0",
+  secondary_color = "#775D84",
+  code_font_family = "Fira Code",
+  code_font_url    = "https://cdn.rawgit.com/tonsky/FiraCode/1.204/distr/fira_code.css",
+  text_font_google = google_font("Didact Gothic"),
+  header_font_google = google_font("Sen", "700"),
+  text_color = "#555555",
+  code_font_size = 8
+)
+```
+
+## Reprex [Life] Kit
+
+```{r echo = FALSE}
+knitr::include_graphics("images/reprex_kit.png")
+```
+
+---
+## Reproducible examples
+
+Reproducible examples [allow someone else to recreate your problem by just copying and pasting R code](http://adv-r.had.co.nz/Reproducibility.html) 
+
+
+<br>
+<br>
+
+
+.center[
+![help me help you](https://github.com/cran/reprex/raw/master/man/figures/help-me-help-you.png)
+]
+
+<br>
+<br>
+
+But they can be tedious to write. The {reprex} package helps with that!
+
+---
+## Writing reproducible examples
+
+Let's say you want a reproducible example for generating a sequence of numbers that counts by 2, but can only make it count by 1 currently. There are a few ways to do this:
+
+\#1 **Copy** your code to your clipboard and then run `reprex()`
+
+\#2 **Wrap** your code with `reprex()`
+
+```{r eval = FALSE}
+reprex(seq(1, 10))
+```
+
+\#3 **Wrap** an input filepath with `reprex()`
+
+```{r eval = FALSE}
+reprex(input = "my_reprex.R")
+```
+
+\#4 Use the reprex **RStudio Addin**
+
+You'll then have a **reprex** in your clipboard to paste! Since `reprex()` is meant to be run interactively, avoid leaving it in your code. 
+
+---
+class: middle
+
+``` r
+seq(1, 10)
+#>  [1]  1  2  3  4  5  6  7  8  9 10
+```
+
+<sup>Created on 2020-03-19 by the [reprex package](https://reprex.tidyverse.org) (v0.3.0)</sup>
+---
+
+## \#1: Write Comments liberally 
+
+In order to leave descriptive comments throughout, it's often easier to write multi-line code.
+
+```{r eval = FALSE}
+reprex({ # <- notice the {} enclosing the code
+  # I want to count by 2
+  seq(1, 10)
+  # But I can only figure out how to count by 1
+})
+```
+
+
+``` r
+# I want to count by 2
+seq(1, 10)
+#>  [1]  1  2  3  4  5  6  7  8  9 10
+# But I can only figure out how to count by 1
+```
+
+This also helps readers spot your problem and see your thought process. It can also greatly help you resolve your own question! 
+---
+
+## \#2: Use data that others can use
+
+The general advice is to make your data as **boring** as possible. This means try to use data that is readily available like `mtcars` or `iris`. But let's say you have a more specific question. 
+
+```{r include = FALSE}
+df <- tibble(person = rep(c("A", "B", "C"), 3), date = c(rep("2020-01-01", 3), rep("2020-02-01", 3), rep("2020-03-01", 3)), total = sample(c("1", "2", "3"), 9, replace = TRUE))
+```
+
+You might post this code on StackOverflow and ask: Why are all my averages NA?
+
+```{r warning = FALSE}
+df %>%
+  group_by(person) %>%
+  summarise(average = mean(total))
+```
+
+But, no one else can run your code to see where things go wrong :(
+
+---
+
+Without more context, it's really tough to see the problem. With a combination of {datapasta} & {reprex} we can write a much better question! In general we want the smallest dataset possible, so I like to use `head()` to get just a few rows.
+
+```{r}
+library(datapasta)
+
+x <- tribble_construct(head(df)) 
+ # writes code to reconstruct table
+cat(x)
+```
+
+---
+
+Then we can post a better question with the data included:
+
+``` r
+library(dplyr)
+df <- tibble::tribble(
+  ~person,        ~date, ~total,
+  "A", "2020-01-01",    "3",
+  "B", "2020-01-01",    "3",
+  "C", "2020-01-01",    "1",
+  "A", "2020-02-01",    "1",
+  "B", "2020-02-01",    "3",
+  "C", "2020-02-01",    "1"
+)
+df %>%
+  group_by(person) %>%
+  summarise(average = mean(total)) # I expected this to give 1 for C, for example. But it's NA
+
+#> # A tibble: 3 x 2
+#>   person average
+#>   <chr>    <dbl>
+#> 1 A           NA
+#> 2 B           NA
+#> 3 C           NA
+```
+
+And someone will be able to help you see that your numbers are actually characters, thus giving NA! Much easier than the previous guesswork.
+
+---
+## \#3 Shorter code is better & clean up after yourself
+
+Maybe later on you want to plot your data and change the colors. But we don't need to know that to answer the wrangling question!
+
+
+
+```{r messy_example, include = FALSE, eval = FALSE, warning = FALSE, results = 'hide'}
+library(tidyverse)
+library(colorspace)
+library(ggthemes)
+
+df %>%
+  group_by(person) %>%
+  summarise(average = mean(total)) # I expected this to give 1 for C, for example. But it's NA
+```
+
+```{r, echo = FALSE, warning = FALSE}
+
+decorate("messy_example") %>% 
+  flair("library(colorspace)", background = "pink") %>%
+  flair("library(ggthemes)", background = "pink")
+```
+
+And if you write a file, delete it after! But do **not** delete anything you didn't write.
+
+```{r eval = FALSE}
+...
+write_file(df, "output.csv")
+file.remove("output.csv")
+```
+
+
+---
+## \#4 `sessionInfo` is a helpful look at your environment
+
+If you have old/out-of-date packages, this is easiest to see with your session information. It's a summary of your R version, packages, and their versions.
+
+There are two ways to include this information:
+
+```{r eval = FALSE}
+# argument to reprex()
+reprex(..., si = TRUE)
+
+# OR
+
+# manually include the function
+reprex({
+  ...
+  sessionInfo()
+})
+```
+
+
+---
+## \#5 Test your question in a fresh R session before posting it
+
+Often you'll solve your own problem by writing a **good** question! You may find that you had overwritten an object or another somewhat-invisible error.
+
+To make sure that the code will run on someone else's machine, make sure to test it in a **NEW** R session. Don't just clear your environment! This is not the same thing. 
+
+You can do this by clicking `Session` -> `Restart R`
+
+Or with the keyboard shortcut `ctrl[cmd]+shift+F10`
+
+<br>
+
+.center[
+```{r echo = FALSE, fig.retina=3, out.width=150}
+knitr::include_graphics("https://www.stickpng.com/assets/images/585e4831cb11b227491c338e.png")
+```
+]
+
+
+---
+class: center, middle
+
+```{r echo = FALSE}
+knitr::include_graphics("images/reprex_kit.png")
+```
+
+---
+
+class:  middle
+## 5 Main Takeaways
+
+\#1: Write comments liberally
+
+\#2: Use data that others can use
+
+\#3: Shorter code is better & clean up after yourself
+
+\#4: `sessionInfo()` is a helpful look at your environment
+
+\#5: Test your question in a fresh R session before posting it
