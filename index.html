@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
   <head>
     <title>Writing reproducible examples to get ‘good help’</title>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <meta name="author" content="Katie Jolly @ RLadies Seattle" />
-    <meta name="date" content="2020-03-23" />
+    <meta name="date" content="2020-03-24" />
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
   <body>
@@ -13,7 +13,7 @@ class: center, middle, inverse, title-slide
 
 # Writing reproducible examples to get ‘good help’
 ### Katie Jolly @ RLadies Seattle
-### 2020-03-23
+### 2020-03-24
 
 ---
 
@@ -44,7 +44,17 @@ Reproducible examples [allow someone else to recreate your problem by just copyi
 &lt;br&gt;
 
 But they can be tedious to write. The {reprex} package helps with that!
+---
+class: middle
 
+## A reproducible example
+
+``` r
+seq(1, 10) # I want this to count by 2
+#&gt;  [1]  1  2  3  4  5  6  7  8  9 10
+```
+
+&lt;sup&gt;Created on 2020-03-19 by the [reprex package](https://reprex.tidyverse.org) (v0.3.0)&lt;/sup&gt;
 ---
 ## Writing reproducible examples
 
@@ -70,15 +80,7 @@ reprex(input = "my_reprex.R")
 
 You'll then have a **reprex** in your clipboard to paste! Since `reprex()` is meant to be run interactively, avoid leaving it in your code. 
 
----
-class: middle
 
-``` r
-seq(1, 10)
-#&gt;  [1]  1  2  3  4  5  6  7  8  9 10
-```
-
-&lt;sup&gt;Created on 2020-03-19 by the [reprex package](https://reprex.tidyverse.org) (v0.3.0)&lt;/sup&gt;
 ---
 
 ## \#1: Write Comments liberally 
@@ -138,13 +140,7 @@ Without more context, it's really tough to see the problem. With a combination o
 
 ```r
 library(datapasta)
-```
 
-```
-## Warning: package 'datapasta' was built under R version 3.5.3
-```
-
-```r
 x &lt;- tribble_construct(head(df)) 
  # writes code to reconstruct table
 cat(x)
@@ -153,12 +149,12 @@ cat(x)
 ```
 ## tibble::tribble(
 ##   ~person,        ~date, ~total,
-##       "A", "2020-01-01",    "3",
-##       "B", "2020-01-01",    "3",
-##       "C", "2020-01-01",    "1",
+##       "A", "2020-01-01",    "2",
+##       "B", "2020-01-01",    "1",
+##       "C", "2020-01-01",    "3",
 ##       "A", "2020-02-01",    "2",
-##       "B", "2020-02-01",    "3",
-##       "C", "2020-02-01",    "2"
+##       "B", "2020-02-01",    "1",
+##       "C", "2020-02-01",    "3"
 ##   )
 ```
 
@@ -272,7 +268,19 @@ class:  middle
 \#4: `sessionInfo()` is a helpful look at your environment
 
 \#5: Test your question in a fresh R session before posting it
+
+
+---
+
+## Where to find more information?
+
+* [Reprex do's and don'ts](https://reprex.tidyverse.org/articles/reprex-dos-and-donts.html) (post)
+* [How to use reprex](https://reprex.tidyverse.org/articles/articles/learn-reprex.html) (video + slides)
+* [Using datapasta with reprex](https://reprex.tidyverse.org/articles/articles/datapasta-reprex.html) (post)
+* [What's a reproducible example ('reprex') and how do I do one](https://community.rstudio.com/t/faq-whats-a-reproducible-example-reprex-and-how-do-i-do-one/5219/3) (forum)
+* [How to ask questions so they get answered! Possibly by yourself! rOpenSci Community Call v13](https://ropensci.org/commcalls/2017-03-07/) (video)
     </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
 "highlightStyle": "github",
@@ -282,16 +290,74 @@ class:  middle
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
 });
-(function() {
-  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
   if (!r) return;
   s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
   d.head.appendChild(s);
-})();</script>
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 
 <script>
 (function() {
-  var i, text, code, codes = document.getElementsByTagName('code');
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
   for (i = 0; i < codes.length;) {
     code = codes[i];
     if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
@@ -305,14 +371,15 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     i++;
   }
-})();
+};
+slideshow._releaseMath(document);
 </script>
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
 (function () {
   var script = document.createElement('script');
   script.type = 'text/javascript';
-  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
   if (location.protocol !== 'file:' && /^https?:/.test(script.src))
     script.src  = script.src.replace(/^https?:/, '');
   document.getElementsByTagName('head')[0].appendChild(script);
