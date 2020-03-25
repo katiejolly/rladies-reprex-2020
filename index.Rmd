@@ -62,7 +62,17 @@ Reproducible examples [allow someone else to recreate your problem by just copyi
 <br>
 
 But they can be tedious to write. The {reprex} package helps with that!
+---
+class: middle
 
+## A reproducible example
+
+``` r
+seq(1, 10) # I want this to count by 2
+#>  [1]  1  2  3  4  5  6  7  8  9 10
+```
+
+<sup>Created on 2020-03-19 by the [reprex package](https://reprex.tidyverse.org) (v0.3.0)</sup>
 ---
 ## Writing reproducible examples
 
@@ -86,15 +96,7 @@ reprex(input = "my_reprex.R")
 
 You'll then have a **reprex** in your clipboard to paste! Since `reprex()` is meant to be run interactively, avoid leaving it in your code. 
 
----
-class: middle
 
-``` r
-seq(1, 10)
-#>  [1]  1  2  3  4  5  6  7  8  9 10
-```
-
-<sup>Created on 2020-03-19 by the [reprex package](https://reprex.tidyverse.org) (v0.3.0)</sup>
 ---
 
 ## \#1: Write Comments liberally 
@@ -274,3 +276,14 @@ class:  middle
 \#4: `sessionInfo()` is a helpful look at your environment
 
 \#5: Test your question in a fresh R session before posting it
+
+
+---
+
+## Where to find more information?
+
+* [Reprex do's and don'ts](https://reprex.tidyverse.org/articles/reprex-dos-and-donts.html) (post)
+* [How to use reprex](https://reprex.tidyverse.org/articles/articles/learn-reprex.html) (video + slides)
+* [Using datapasta with reprex](https://reprex.tidyverse.org/articles/articles/datapasta-reprex.html) (post)
+* [What's a reproducible example ('reprex') and how do I do one](https://community.rstudio.com/t/faq-whats-a-reproducible-example-reprex-and-how-do-i-do-one/5219/3) (forum)
+* [How to ask questions so they get answered! Possibly by yourself! rOpenSci Community Call v13](https://ropensci.org/commcalls/2017-03-07/) (video)
